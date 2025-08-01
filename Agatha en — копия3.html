@@ -53,11 +53,14 @@
         .crew-icon.deceased .cross {
             display: block; /* Shown when deceased */
         }
-        #phase-image {
-            max-height: 300px;
-            object-fit: cover;
-            border-radius: 0.5rem;
-            margin-top: 1rem;
+#phase-image {
+    max-height: 300px;
+    object-fit: contain; /* shows the full image, no cropping */
+    width: 100%;
+    border-radius: 0.5rem;
+    margin-top: 1rem;
+    background: #f3f4f6; /* optional: light background for letterboxing effect */
+}
         }
     </style>
 </head>
