@@ -347,7 +347,7 @@ function showConsequence(decisionKey) {
     if (decisionKey === phase.correct) {
         correctDecisionsCount++;
     }
-    
+
     totalTimeLost += decision.time;
     totalDeceased += decision.deceased;
     totalUnknown += decision.unknown;
@@ -370,27 +370,18 @@ function showConsequence(decisionKey) {
     }
 }
 
-// New helper function for consequence details
+// Helper function for consequence details (without image logic)
 function showConsequenceDetails(decisionKey, phase, decision) {
     document.getElementById('consequence-text').innerHTML = decision.consequence;
     document.getElementById('time-lost').textContent = `${totalTimeLost} minutes`;
     document.getElementById('correct-answer-status').textContent = `${correctDecisionsCount} of ${gamePhases.length}`;
-    
+
     renderHeadcount('headcount-visual', 'headcount-text', totalDeceased, totalUnknown);
     document.getElementById('external-casualties-text').textContent = `(${totalExternalDeceased})`;
 
-    // Show the image for the phase (in the normal UI)
-    const phaseImage = document.getElementById('phase-image');
-    if (phase.image) {
-        phaseImage.src = phase.image;
-        phaseImage.classList.remove('hidden');
-    } else {
-        phaseImage.classList.add('hidden');
-    }
-
     const consequenceBox = document.getElementById('consequence-box');
     const scoreBox = document.getElementById('score-box');
-    
+
     consequenceBox.classList.remove('hidden');
     scoreBox.classList.remove('hidden');
 
