@@ -473,7 +473,8 @@ function showConsequenceDetails(decisionKey, phase, decision) {
             document.getElementById('start-page').classList.remove('hidden');
         }
 function startSimulation() {
-    playAudio('audio-start-simulation');
+    document.getElementById('audio-start-simulation').currentTime = 0;
+    document.getElementById('audio-start-simulation').play();
     document.getElementById('start-page').classList.add('hidden');
     document.getElementById('simulation-page').classList.remove('hidden');
     loadPhase(0);
@@ -490,9 +491,10 @@ function startSimulation() {
 <div id="fullscreen-image-overlay" style="display:none;position:fixed;z-index:9999;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.95);justify-content:center;align-items:center;">
   <img id="fullscreen-phase-image" src="" alt="Phase Image" style="max-width:100vw;max-height:100vh;">
 </div>
-<audio id="audio-start-simulation" src="audio/start-simulation.mp3"></audio>
+<audio id="audio-start-simulation" src="https://github.com/1123-lab/Sim/raw/refs/heads/audio/start-simulation.mp3"></audio>
 <audio id="audio-next-phase" src="audio/next-phase.mp3"></audio>
 <audio id="audio-consequence" src="audio/consequence.mp3"></audio>    
 </body>
 </html>
+
 
