@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Safety Simulation Game</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .decision-btn, .action-btn {
+            transition: background-color 0.3s, transform 0.2s;
+        }
+        .decision-btn:hover, .action-btn:hover {
+            transform: translateY(-2px);
+        }
+        .decision-btn.selected {
+            background-color: #b91c1c; /* Darker Red */
+            color: white;
+            cursor: default;
+        }
+        .decision-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        #consequence-box, #score-box, #next-phase-btn, #end-game-message {
+            transition: opacity 0.5s, transform 0.5s;
+        }
+        .crew-icon {
+            width: 24px;
+            height: 24px;
+            stroke-width: 2;
+            fill: none;
+            stroke-linecap: round;
+        }
+        .crew-icon.alive {
+            stroke: #000000; /* Black */
+        }
+        .crew-icon.unknown {
+            stroke: #f59e0b; /* Amber/Yellow */
+        }
+        .crew-icon.deceased {
+            stroke: #6b7280; /* Gray */
+        }
+        .cross {
+            stroke: #ef4444; /* Red */
+            stroke-width: 3;
+            stroke-linecap: round;
+            display: none; /* Hidden by default */
+        }
+        .crew-icon.deceased .cross {
+            display: block; /* Shown when deceased */
+        }
+        #fullscreen-image-overlay {
+            transition: opacity 0.3s ease-in-out;
+        }
+        .audio-btn {
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
+
+    <div class="w-full max-w-4xl bg-white rounded-xl shadow-2xl p-6 md:p-10">
+        
+        <!-- Start Page -->
+        <div id="start-page" class="text-center space-y-8">
+             <h1 class="text-3xl md:text-4xl font-bold text-gray-900">INCIDENT ONBOARD ACCOMMODATION VESSEL 'AGATHA'</h1>
+            <div class="bg-gray-100 p-4 rounded-lg text-left">
+                <h2 class="text-xl font-bold text-gray-800 mb-2">PREHISTORY</h2>
+                <p class="text-gray-700">The simulation you are about to start is based on a real incident that unfolded 20 years ago, on the real vessel with the same number of crew aboard, but its details altered for the purpose of this simulation.</p>
+            </div>
+            <div class="bg-red-50 p-6 rounded-lg text-left">
+                <h2 class="text-xl font-bold text-red-800 mb-2">TASK FOR SIMULATION</h2>
+                <p class="text-red-800 leading-relaxed text-lg">
+                    You are the Captain of the vessel 'Agatha'. Your objective is to navigate through the nine phases of a developing emergency. At each phase, you will be presented with a scenario and three possible decisions. Choose the action you believe is most effective. Your performance will be evaluated based on the consequences of your choices. Your final score will account for the number of correct decisions made, the total time spent, and, most importantly, preventing crew and external casualties.
+                </p>
+            </div>
+            <button class="action-btn bg-red-600 text-white font-bold py-3 px-10 rounded-lg shadow-md hover:bg-red-700" onclick="startSimulation()">
+                Start Simulation
+            </button>
+        </div>
+
+        <!-- Simulation Page -->
+        <div id="simulation-page" class="hidden space-y-8">
+            <!-- Header Section -->
+            <div class="text-center border-t pt-6">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-800">Simulation of Incident</h2>
+                <p id="phase-title" class="text-2xl text-red-600 font-semibold mt-2"></p>
+            </div>
+
+            <!-- Scenario Section -->
+            <div id="scenario-section">
+                <div class="flex justify-between items-center mb-2">
+                    <h3 class="text-xl font-semibold text-gray-700">Scenario Setup:</h3>
+                    <span id="scenario-audio-btn-container"></span>
+                </div>
+                <div class="bg-gray-50 border-l-4 border-red-500 p-4 rounded-r-lg">
+                    <p id="scenario-text" class="text-lg text-gray-600 leading-relaxed"></p>
+                </div>
+            </div>
+
+            <!-- Decision Section -->
+            <div id="decision-section">
+                <h3 id="decision-question" class="text-xl font-semibold text-gray-700 mb-4"></h3>
+                <div id="decision-buttons" class="grid grid-cols-1 md:grid-cols-3 gap-4"></div>
+            </div>
+
+            <!-- Consequence Section (Initially Hidden) -->
+            <div id="consequence-box" class="hidden opacity-0 transform -translate-y-4">
+                 <div class="flex justify-between items-center mb-2">
+                    <h3 class="text-xl font-semibold text-gray-700">Consequence:</h3>
+                    <span id="consequence-audio-btn-container"></span>
+                </div>
+                <div class="bg-orange-50 border-l-4 border-orange-500 p-5 rounded-r-lg shadow-inner">
+                    <p id="consequence-text" class="text-lg text-gray-800 leading-relaxed"></p>
+                </div>
+            </div>
+            
+            <!-- Score Section (Initially Hidden) -->
+            <div id="score-box" class="hidden opacity-0 transform -translate-y-4">
+                <h3 class="text-xl font-semibold text-gray-700 mb-2">Score:</h3>
+                 <div class="bg-gray-50 border-l-4 border-gray-400 p-5 rounded-r-lg shadow-inner space-y-4">
+                    <div class="flex justify-between items-center">
+                        <p><strong>Correct Decisions:</strong> <span id="correct-answer-status" class="font-bold text-green-600"></span></p>
+                        <p><strong>Time Elapsed:</strong> <span id="time-lost" class="font-bold text-red-600"></span></p>
+                    </div>
+                    <div class="flex flex-wrap justify-between items-center gap-4">
+                        <div class="flex items-center space-x-2">
+                            <strong class="text-gray-700">Crew Status:</strong>
+                            <div id="headcount-visual" class="flex space-x-1"></div>
+                            <span id="headcount-text" class="font-bold text-gray-700"></span>
+                        </div>
+                         <p><strong>External Casualties:</strong> <span id="external-casualties-text" class="font-bold text-red-600">0</span></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Next Phase Button (Initially Hidden) -->
+            <div id="next-phase-container" class="text-center hidden">
+                 <button id="next-phase-btn" class="action-btn bg-sky-500 text-white font-bold py-3 px-8 rounded-lg shadow-md hover:bg-sky-600">
+                    Next Phase
+                </button>
+            </div>
+        </div>
+
+        <!-- Final Score Page -->
+        <div id="final-page" class="hidden text-center p-6 space-y-6">
+            <h2 class="text-3xl font-bold text-green-600">Congratulations, you have completed the simulation.</h2>
+            
+            <div class="bg-gray-100 p-6 rounded-lg shadow-inner">
+                <h3 class="text-2xl font-bold text-gray-800 mb-4">Your Final Score:</h3>
+                <div class="flex flex-col items-center space-y-4">
+                    <!-- Row 1: Casualties -->
+                    <div class="flex flex-col md:flex-row justify-center items-center md:space-x-8 space-y-4 md:space-y-0">
+                        <div class="flex items-center space-x-2">
+                            <strong class="text-lg">Final Crew Status:</strong>
+                            <div id="final-headcount-visual" class="flex space-x-1"></div>
+                            <span id="final-headcount-text" class="font-bold text-gray-700 text-xl"></span>
+                        </div>
+                         <p class="text-lg"><strong>External Casualties:</strong> <span id="final-external-casualties-text" class="font-bold text-red-600 text-xl"></span></p>
+                    </div>
+                    <!-- Row 2: Score -->
+                    <div class="flex flex-col md:flex-row justify-center items-center md:space-x-8 space-y-4 md:space-y-0">
+                        <p class="text-lg"><strong>Correct Decisions:</strong> <span id="final-correct-decisions" class="font-bold text-green-600 text-xl"></span></p>
+                        <p class="text-lg"><strong>Total Time Elapsed:</strong> <span id="final-time-lost" class="font-bold text-red-600 text-xl"></span></p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-yellow-50 border-l-4 border-yellow-500 p-4 text-left">
+                 <p class="text-yellow-800">Do not worry - no one was injured or dead during the real incident with the fire in the provisional store 20 years ago.</p>
+            </div>
+
+            <p class="text-xl">The best decision in any incident is to prevent it.</p>
+            <blockquote class="mt-4 italic text-xl border-l-4 border-gray-300 pl-4 text-gray-600">
+                <p>"The little details are what is vital. Little things make big things happen."</p>
+                <footer class="mt-1 text-sm">- Agatha Christie, *And Then There Were None*</footer>
+            </blockquote>
+             <button class="action-btn mt-6 bg-blue-600 text-white font-bold py-2 px-6 rounded-lg shadow-md hover:bg-blue-700" onclick="restartGame()">
+                Restart Simulation
+            </button>
+        </div>
+
+    </div>
+    
+    <!-- Fullscreen Image Overlay -->
+    <div id="fullscreen-image-overlay" class="hidden fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
+        <img id="fullscreen-image" src="" alt="Phase illustration" class="max-w-[90vw] max-h-[90vh] object-contain rounded-lg">
+    </div>
+
+    <!-- Audio Player -->
+    <audio id="audio-player"></audio>
+
+
+    <script>
+        let currentPhaseIndex = 0;
+        let totalTimeLost = 0;
+        let totalDeceased = 0;
+        let totalUnknown = 0;
+        let totalExternalDeceased = 0;
+        let correctDecisionsCount = 0;
+        const totalCrew = 10;
+        let currentAudioPlayer = document.getElementById('audio-player');
+        let currentAudioBtn = null;
+
+        const playIconHTML = `<div class="flex items-center space-x-2 text-blue-600 hover:text-blue-800"><span class="font-medium">Play Audio</span><svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></div>`;
+        const pauseIconHTML = `<div class="flex items-center space-x-2 text-blue-600 hover:text-blue-800"><span class="font-medium">Pause</span><svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></div>`;
+
+        const gamePhases = [
+            { // Phase 1
+                title: "Phase 1: Prevention/Early Detection",
+                correct: 'A',
+                image: "https://github.com/1123-lab/Sim/blob/main/1.png?raw=true",
+                scenarioAudio: "https://github.com/1123-lab/Sim/raw/refs/heads/audio/scenario1.mp3",
+                scenario: `"<strong>07:30, 15th July | Astrakhan Shipyard.</strong> You are the Captain of the 'Agatha', a 52-meter accommodation vessel with a crew of 10. There are no passengers onboard as the ship is on keel blocks for its 5-year scheduled docking; tanks are empty, her generators are under repair, and she's running on shore power with only minimal equipment operational. For a week, shipyard workers have been conducting hot work, replacing steel sections. The next task involves a welder cutting the forward bulkhead of a Sewage Compartment, which also serves as the wall for the ship's Provisional Store. This store is still filled with flammable supplies, as the task of emptying it was several times postponed and finally scheduled for today."`,
+                question: "As the Captain, what is your morning routine about PTW?",
+                decisions: {
+                    A: { text: "Contact the shipyard supervisor to confirm today's hot work schedule and verify the PTW.", consequence: "You make the correct procedural decision, but the supervisor admits that the daily on-site inspection hasn't been completed yet. Meanwhile, the welder, wanting to finish before the day's heat, has already started cutting. He wasn't part of the initial PTW signing and assumes all precautions, like emptying the adjacent Provisional Store, were completed yesterday. He is unaware the task was delayed and that he is cutting into a bulkhead bordering a room full of flammable materials.", time: 7, deceased: 0, unknown: 0, externalDeceased: 0, audio: "https://github.com/1123-lab/Sim/raw/refs/heads/audio/consequenceP1A.mp3" },
+                    B: { text: "Contact the chief mate to confirm today's hot work schedule and check the PTW status.", consequence: "The chief mate confirms there's a plan to remove flammable items from the Provisional Store today as part of the PTW precautions. But he doesn't know the welder arrived early and went directly to the Sewage Compartment to start cutting, wanting to finish his work before it became too hot outside. The welder, not being fully involved in the daily PTW validation process, is unaware that the space on the other side of the bulkhead hasn't been cleared.", time: 5, deceased: 0, unknown: 0, externalDeceased: 0, audio: "https://github.com/1123-lab/Sim/raw/refs/heads/audio/consequenceP1B.mp3" },
+                    C: { text: "Since the PTW was issued a week ago, you assume it's still valid and don't re-validate it for today's work.", consequence: "You assume the week-old PTW is sufficient, neglecting the requirement for a daily re-validation and on-site inspection. Because of this, you don't verify the current conditions. The welder arrived early and went directly to the Sewage Compartment to start cutting. He wasn't directly involved in the PTW process (supervisors handled all the forms) and is completely unaware that the Provisional Store on the other side of his work area is still full of flammable materials. The fire is now inevitable.", time: 0, deceased: 0, unknown: 0, externalDeceased: 0, audio: "https://github.com/1123-lab/Sim/raw/refs/heads/audio/consequenceP1C.mp3" }
+                }
+            },
+            { // Phase 2
+                title: "Phase 2: Fire Discovery",
+                correct: 'A',
+                image: "https://github.com/1123-lab/Sim/blob/main/2.png?raw=true",
+                scenarioAudio: "https://github.com/1123-lab/Sim/raw/refs/heads/audio/scenario2.mp3",
+                scenario: `"A shipyard welder, having entered the Sewage Compartment through an internal access way, settles in and starts to cut a bulkhead with an oxy-acetylene cutter. The heat ignites paper towels, plastic cans, and other materials in the adjacent Provisional Store, starting the fire. You are on the second deck when you smell smoke. You trace it to an opening in the deck. Peering into the hole, you see a faint white glow from far below. <strong>The access to the Provisional Store in the hold is a set of very inclined steps that descend through a narrow passage with a sharp turn before reaching the store's door.</strong> The fire has started. You know that with this kind of flammable material, the fire will grow quickly, threatening the accommodation block if you don't act fast."`,
+                question: "What is your immediate action?",
+                decisions: {
+                    A: { text: "Run through the accommodation and deck shouting 'FIRE! FIRE! FIRE!'", consequence: "You make the correct decision to raise the alarm quickly, but the sound doesn't travel effectively to all parts of the ship over the shipyard noise. The AB sleeping in his cabin on the third deck, far from the commotion, remains undisturbed as smoke slowly begins to migrate upwards through stairwells and vents.", time: 0.5, deceased: 0, unknown: 0, externalDeceased: 0, audio: "https://github.com/1123-lab/Sim/raw/refs/heads/audio/consequenceP2A.mp3" },
+                    B: { text: "Go directly to the bridge to activate the ship's main fire alarm system.", consequence: "You race to the bridge to sound the general alarm, but you discover the fire alarm panel is non-operational—it was disconnected for GMDSS equipment checks, and the backup batteries for the fire station had been removed for maintenance. You lose valuable time attempting to use a system that is offline while the fire builds in the hold below.", time: 1.5, deceased: 0, unknown: 0, externalDeceased: 0, audio: "https://github.com/1123-lab/Sim/raw/refs/heads/audio/consequenceP2B.mp3" },
+                    C: { text: "Grab a nearby extinguisher and start heading down the steps to fight it quietly.", consequence: "Believing it's a small fire, you decide to handle it yourself. You grab an extinguisher and start down the steep, narrow steps. The awkward turn and incline make it nearly impossible to move quickly while carrying the equipment. Before you are even halfway down, the thick, acrid smoke chokes you, forcing a difficult retreat back up the steps. You have wasted critical time, inhaled smoke, and the fire continues growing.", time: 4, deceased: 0, unknown: 0, externalDeceased: 0, audio: "https://github.com/1123-lab/Sim/raw/refs/heads/audio/consequenceP2C.mp3" }
+                }
+            },
+            { // Phase 3
+                title: "Phase 3: Muster Checking",
+                correct: 'A',
+                image: "https://github.com/1123-lab/Sim/blob/main/3.png?raw=true",
+                scenarioAudio: "https://github.com/1123-lab/Sim/raw/refs/heads/audio/scenario3.mp3",
+                scenario: `"After the alarm was raised verbally, crew members are gathering chaotically at the muster station on the main deck. Smoke is now clearly visible rising from the second deck doorway that leads down to the holds. The fire is constantly growing, and you know you must react quickly before the entire accommodation is on fire. You must account for all personnel before committing teams to fight the fire."`,
+                question: "What is your method for crew accountability?",
+                decisions: {
+                    A: { text: "Use the T-card system at the muster station for a quick headcount.", consequence: "You follow the correct procedure, but the T-card board is misleading. It shows one card in the 'OFF' position for the Night AB because his back-to-back Day AB, knowing the Night AB usually went to their rented apartment in town, had moved it for him. The physical count matches the remaining 'ON' cards, so you wrongly conclude everyone is safely accounted for.", time: 3, deceased: 0, unknown: 0, externalDeceased: 0, audio: "https://github.com/1123-lab/Sim/raw/refs/heads/audio/consequenceP3A.mp3" },
+                    B: { text: "Use the official crew list and have department heads verbally confirm their staff.", consequence: "You take the crew list and call out names. When you get to the Night AB, his department head Second Mate, having spoken to his close friend Day AB, reports that Night AB as 'ashore for the day as usual.' With no reason to doubt the report, you mark him as off the vessel. The sleeping AB on the third deck remains undiscovered.", time: 6, deceased: 0, unknown: 0, externalDeceased: 0, audio: "https://github.com/1123-lab/Sim/raw/refs/heads/audio/consequenceP3B.mp3" },
+                    C: { text: "Skip the formal count to save time and prepare the fire teams immediately.", consequence: "Believing a fast response is more critical than procedure, you shout: 'Is everyone here?' to the assembled crew, who shout back: 'Yes!' No formal count is conducted. The absence of the Night AB goes completely unnoticed as you rush to organize the fire attack.", time: 0.5, deceased: 0, unknown: 0, externalDeceased: 0, audio: "https://github.com/1123-lab/Sim/raw/refs/heads/audio/consequenceP3C.mp3" }
+                }
+            },
+            { // Phase 4
+                title: "Phase 4: Alerting and Communication",
+                correct: 'B',
+                image: "https://github.com/1123-lab/Sim/blob/main/4.png?raw=true",
+                scenarioAudio: "https://github.com/1123-lab/Sim/raw/refs/heads/audio/scenario4.mp3",
+                scenario: `"The muster check is complete but critically flawed. You believe all hands are accounted for. However, you do not know that the missing Night AB on the third deck <strong class='text-red-700'>has already died from smoke inhalation while sleeping;</strong> a half-empty bottle of vodka would later be found under his bed. The fire is constantly growing, and you must react quickly before the entire accommodation is on fire. You are following the muster list and have to alert all parties, but the company accountant did not top up the balance of the ship's mobile phone in time, and you're limited to <strong>one call</strong> only."`,
+                question: "What is your first priority call?",
+                decisions: {
+                    A: { text: "Call the shipyard's emergency number directly.", consequence: "You call the shipyard who react immediately and send their men to open shore fire lines and mount fire hoses. They arrive quickly but there was not enough pressure in the shore fire line and the water ended as soon as they filled the hose - only a weak burst of rusty water quickly ran out.", time: 2, deceased: 1, unknown: 0, externalDeceased: 0, audio: "https://github.com/1123-lab/Sim/raw/refs/heads/audio/consequenceP4A.mp3" },
+                    B: { text: "Call the company's Designated Person Ashore (DPA).", consequence: "You make the correct procedural choice by calling the DPA, but he is in another country. He begins the official notification chain: Company office -> Local agent -> Astrakhan shipyard. The response is professionally managed but significantly delayed. Meanwhile, the shipyard workers notice the smoke and react, but their shore fire line has no pressure, producing only a weak burst of rusty water before failing.", time: 5, deceased: 1, unknown: 0, externalDeceased: 0, audio: "https://github.com/1123-lab/Sim/raw/refs/heads/audio/consequenceP4B.mp3" },
+                    C: { text: "Call the captain of the vessel on keel blocks nearby for immediate assistance.", consequence: "You contact the captain of the neighboring vessel. Alarmed by the emergency, he agrees to send help immediately, but warns that he has a minimum crew onboard and can only spare one man but most experienced. He sends his Chief Mate over with a BA set and extinguisher. Meanwhile, the shipyard workers notice the smoke and react, but their shore fire line has no pressure, producing only a weak burst of rusty water before failing.", time: 1.5, deceased: 1, unknown: 0, externalDeceased: 0, audio: "https://github.com/1123-lab/Sim/raw/refs/heads/audio/consequenceP4C.mp3" }
+                }
+            },
+            { // Phase 5
+                title: "Phase 5: First Actions of the Crew",
+                correct: 'B',
+                image: "https://github.com/1123-lab/Sim/blob/main/5.png?raw=true",
+                scenarioAudio: "https://github.com/1123-lab/Sim/raw/refs/heads/audio/scenario5.mp3",
+                scenario: `"All available crew have moved from the muster station to the second deck, gathering near the access to the Provisional Store. They are coughing from the smoke but are ready to fight. Your anger at the shipyard's useless fire line—which produced only a weak, rusty leak before failing—is quickly replaced by a new unpleasant discovery. Your fire team, a Day AB and the Bosun, report after donning their gear that only one set has full cylinders; the rest were sent ashore for recharging. The fire in the hold is constantly growing, and you must react quickly before the entire accommodation is engulfed."`,
+                question: "What is your immediate command?",
+                decisions: {
+                    A: { text: "Allow the AB to go down alone with the single BA set to extinguish the fire quickly.", consequence: "Just as your AB is about to descend, the Chief Mate from the nearby vessel arrives alone with his own BA set. Seeing your man ready, he says, 'I'll go with him.' After navigating the difficult passage, they enter the Provisional Store. Your AB, wanting to act fast, uses his foam extinguisher and sprays it towards the fire's glow. <strong class='text-red-700'>He hits a live, melted electrical socket, and collapses unconscious.</strong> The visiting Chief Mate, seeing the bright spark and the AB falling down, runs out upstairs and shouts, 'Cut off the electricity! Your man is shocked by electricity!' Mentally traumatised by seeing the incident, he says, 'I am done,' and walks with difficulty back to his vessel.", time: 3, deceased: 0, unknown: 1, externalDeceased: 0, audio: "https://github.com/1123-lab/Sim/raw/refs/heads/audio/consequenceP5A.mp3" },
+                    B: { text: "Hold the team and send AB to other vessel, insisting you need their fire team with BA sets immediately.", consequence: "You make the correct decision to adhere to the buddy system, but you must wait for backup. Shortly after, the Chief Mate from the nearby vessel arrives alone with his BA set. He says, 'Okay, I'm here. I'll need one of your men to guide me.' Your AB joins him, and they head down with two extinguishers. After navigating the difficult passage, they enter the Provisional Store. Your AB, wanting to prove his worth, uses his foam extinguisher and sprays it towards the fire's glow. <strong class='text-red-700'>He hits a live, melted electrical socket and collapses unconscious.</strong> The visiting Chief Mate, seeing the bright spark and the AB falling down, runs out upstairs and shouts, 'Cut off the electricity! Your man is shocked by electricity!' Mentally traumatised by seeing the incident, he says, 'I am done,' and walks with difficulty back to his vessel.", time: 6, deceased: 0, unknown: 1, externalDeceased: 0, audio: "https://github.com/1123-lab/Sim/raw/refs/heads/audio/consequenceP5B.mp3" },
+                    C: { text: "Order the AB to use the single BA set for reconnaissance only, to assess the fire's exact location without fighting it.", consequence: "As the AB prepares for his reconnaissance mission, the Chief Mate from the nearby vessel arrives alone with a fully charged BA set. He says, 'No time for recon, we'll go in now. Let your AB show the way.' Your AB joins him, and they head down with two extinguishers. After navigating the difficult passage, they enter the Provisional Store. Your AB uses his foam extinguisher and sprays it towards the wall of the Provisional Store. <strong class='text-red-700'>He hits a live, melted electrical socket, and collapses unconscious.</strong> The visiting Chief Mate, seeing the bright spark and the AB falling down, runs out upstairs and shouts, 'Cut off the electricity! Your man is shocked by electricity!' Mentally shocked by seeing the incident, he says, 'I am done,' and walks with difficulty back to his vessel.", time: 3, deceased: 0, unknown: 1, externalDeceased: 0, audio: "https://github.com/1123-lab/Sim/raw/refs/heads/audio/consequenceP5C.mp3" }
+                }
+            },
+            { // Phase 6
+                title: "Phase 6: The Power Shutdown",
+                correct: 'C',
+                image: "https://github.com/1123-lab/Sim/blob/main/6.png?raw=true",
+                scenarioAudio: "https://github.com/1123-lab/Sim/raw/refs/heads/audio/scenario6.mp3",
+                scenario: `"The visiting Chief Mate's frantic shouts about the electrocution causes a nervous panic to ripple through the assembled crew. The 2nd Engineer, whose best friend is the AB now lying unconscious in the hold, is trembling with a mix of fear and rage. Your only external help has retreated, the fire is still growing, and you know you must make an immediate decision about the vessel's power to have any chance of saving him."`,
+                question: "What is your immediate order regarding the electrical power?",
+                decisions: {
+                    A: { text: "Keep the electrical power on, as adequate lighting is essential for any rescue attempt.", consequence: "You hesitate, worried about a total blackout hindering a rescue. The Chief Engineer, however, ignores your hesitation after hearing the shouts about the electric shock. He takes matters into his own hands and, to save time, cuts all power to the vessel. In the now dark Sewage Compartment, the welder—confused why his cutter's flame was weakening—is plunged into blackness. <strong class='text-red-700'>Trying to escape, he trips on an unsecured wooden ladder, falls, and breaks his neck.</strong>", time: 1.5, deceased: 0, unknown: 0, externalDeceased: 1, audio: "https://github.com/1123-lab/Sim/raw/refs/heads/audio/consequenceP6A.mp3" },
+                    B: { text: "Order the Chief Engineer to cut all power to the entire vessel immediately.", consequence: "You make the decisive call for a total blackout. The Chief Engineer, already on his way after hearing the shouts, receives your order and immediately kills all power. The vessel is plunged into darkness. In the Sewage Compartment, the welder—confused why his cutter's flame was weakening—is caught by surprise as his portable lamp dies. <strong class='text-red-700'>Trying to escape in the pitch black, he trips on an unsecured wooden ladder, falls, and breaks his neck.</strong>", time: 0.5, deceased: 0, unknown: 0, externalDeceased: 1, audio: "https://github.com/1123-lab/Sim/raw/refs/heads/audio/consequenceP6B.mp3" },
+                    C: { text: "Order the Chief Engineer to cut power to the Provisional Store section only.", consequence: "You make the correct tactical decision, but before you can even finish your order, the Chief Engineer, having heard the frantic shouts about the electric shock, is already running to the switchboard. To save time and eliminate any possible risk, he performs an emergency blackout, cutting all power to the entire vessel. In the Sewage Compartment, the welder—confused why his cutter's flame was weakening as oxygen was sucked into the fire—is plunged into total darkness. <strong class='text-red-700'>Trying to escape, he trips on an unsecured wooden ladder, falls, and breaks his neck.</strong>", time: 1, deceased: 0, unknown: 0, externalDeceased: 1, audio: "https://github.com/1123-lab/Sim/raw/refs/heads/audio/consequenceP6C.mp3" }
+                }
+            },
+            { // Phase 7
+                title: "Phase 7: A Desperate Rescue Attempt",
+                correct: 'B',
+                image: "https://github.com/1123-lab/Sim/blob/main/77.png?raw=true",
+                scenarioAudio: "https://github.com/1123-lab/Sim/raw/refs/heads/audio/scenario7.mp3",
+                scenario: `"The vessel is in total darkness; there is only horrifying glow of the fire from the Provisional Store. You do not know about the welder's fate; your entire focus is on the unconscious AB in the hold. The internal passage is now completely blocked by thick smoke. In the chaos, the Bosun shouts, 'Captain, there's another way! There is a big hatch on the main deck to the store!' You know that access to this hatch is on the main deck from the outer side, <strong>where a narrow path forces anyone opening it to stand with their back to the handrails</strong>. The fire is growing, and you must act fast."`,
+                question: "What is your decision?",
+                decisions: {
+                    A: { text: "Order the crew to open the main deck hatch immediately.", consequence: "Hearing your order, the 2nd Engineer—whose best friend is the unconscious AB below—is driven by desperation. He grabs the nearby cook and they unbolt the hatch. The unbolting of the hatch triggers a deadly backdraft. The fire has consumed most of the oxygen in the sealed Provisional Store, creating a vacuum that makes the hatch resist opening. The moment the seal is broken, a violent rush of fresh air is sucked in, causing the superheated materials to ignite and explode. This erupts in two directions: <strong class='text-red-700'>the hatch is blown open by the force of the explosion, throwing the 2nd Engineer and Cook overboard to the concrete below. The unconscious AB in the hold below is lost to the inferno. Simultaneously, a second, even more concentrated blast shoots up the internal passage. The Chief Mate and Second Mate are engulfed in flames; their fire-resistant coveralls, worn out from repeated washing, offer no protection and ignite instantly.</strong> You lost 5 crew at once...", time: 1, deceased: 5, unknown: -1, externalDeceased: 0, audio: "https://github.com/1123-lab/Sim/raw/refs/heads/audio/consequenceP7A.mp3" },
+                    B: { text: "Remembering the movie 'Backdraft', you order everyone to stay away from the hatch, doubting that it could be dangerous.", consequence: "You make the correct technical call, but on the main deck, the 2nd Engineer—whose best friend is the unconscious AB below—is driven by desperation. He grabs the nearby cook and they unbolt the hatch. The unbolting of the hatch triggers a deadly backdraft. The fire has consumed most of the oxygen in the sealed Provisional Store, creating a vacuum that makes the hatch resist opening. The moment the seal is broken, a violent rush of fresh air is sucked in, causing the superheated materials to ignite and explode. <strong class='text-red-700'>The hatch is blown open by the force of the explosion, striking the 2nd Engineer and Cook and throwing them overboard to concrete from 5 meters height. The unconscious AB in the hold below is lost to the inferno. Simultaneously, a blast of flame surges up the internal passage, engulfing the Chief Mate and Second Mate. Their worn-out, fire-resistant coveralls ignite immediately, offering no protection.</strong> You lost 5 crew at once...", time: 0.5, deceased: 5, unknown: -1, externalDeceased: 0, audio: "https://github.com/1123-lab/Sim/raw/refs/heads/audio/consequenceP7B.mp3" },
+                    C: { text: "You think the nearest way to save the AB is still the internal passage, so you tell the Bosun to wear the BA set left by the other vessel's Chief Mate and go down.", consequence: "Your attempt to use the internal passage is futile. While the Bosun prepares to don the BA set, the desperate 2nd Engineer, whose best friend is the unconscious AB below, grabs the cook and they frantically unbolt the main deck hatch. The unbolting triggers a deadly backdraft as a violent rush of fresh air is sucked into the oxygen-starved space, causing the superheated materials to explode. The hatch is blown open by the force, <strong class='text-red-700'>throwing the 2nd Engineer and Cook overboard to the concrete below. The unconscious AB in the hold is lost to the inferno. Simultaneously, a second blast shoots up the internal passage, engulfing the Chief Mate and Second Mate. Their worn-out coveralls ignite instantly.</strong> You lost 5 crew at once...", time: 1, deceased: 5, unknown: -1, externalDeceased: 0, audio: "https://github.com/1123-lab/Sim/raw/refs/heads/audio/consequenceP7C.mp3" }
+                }
+            },
+            { // Phase 8
+                title: "Phase 8: The Fire Truck Arrival",
+                correct: 'B',
+                image: "https://github.com/1123-lab/Sim/blob/main/8.png?raw=true",
+                scenarioAudio: "https://github.com/1123-lab/Sim/raw/refs/heads/audio/scenario8.mp3",
+                scenario: `"Everyone is in a state of shock from the horrific deaths. Outside, shipyard workers are uselessly trying to resurrect the fallen crew before calling an ambulance. The vessel's interior is now so full of thick, toxic smoke that you and the few remaining survivors are forced out onto the main deck. You hear a siren—finally, the town fire truck has arrived. However, the driver stops, blocked by the cluttered shipyard area, which is full of materials and obstacles. <strong>Their hoses cannot reach the vessel.</strong>"`,
+                question: "What is your decision?",
+                decisions: {
+                    A: { text: "Send your remaining AB to act as a signalman and guide the truck.", consequence: "You order your last AB to guide the fire truck. The shipyard workers are all busy attending to the two crew members who fell, so there is no one else. The AB runs to the truck. <strong class='text-red-700'>In the chaos and hurry to reposition, the fire truck driver reverses, not seeing the AB, who was showing him the way, and crushes him against a workshop container, killing him instantly.</strong>", time: 1.5, deceased: 1, unknown: 0, externalDeceased: 0, audio: "https://github.com/1123-lab/Sim/raw/refs/heads/audio/consequenceP8A.mp3" },
+                    B: { text: "Demand the shipyard provide a guide, as it is their area and their responsibility.", consequence: "You correctly identify that the shipyard is responsible, but the foreman yells back that all his men are busy with the casualties on the ground. Seeing the delay and feeling the urgency, your last AB takes the initiative and runs to guide the fire truck himself. <strong class='text-red-700'>In the chaotic repositioning, the fire truck driver reverses, not seeing the AB, who was showing him the way, and crushes him against a workshop container, killing him instantly.</strong>", time: 4, deceased: 1, unknown: 0, externalDeceased: 0, audio: "https://github.com/1123-lab/Sim/raw/refs/heads/audio/consequenceP8B.mp3" },
+                    C: { text: "Order your crew to start clearing a path for the truck themselves.", consequence: "You order your exhausted crew to move the heavy materials. As they struggle, your last AB, seeing it's too slow, decides to guide the truck through the existing gaps. The shipyard workers are occupied with the fallen crew. <strong class='text-red-700'>In the hurry to move, the truck driver reverses, not seeing the AB in his mirrors, and crushes him against a workshop container, killing him.</strong>", time: 5, deceased: 1, unknown: 0, externalDeceased: 0, audio: "https://github.com/1123-lab/Sim/raw/refs/heads/audio/consequenceP8C.mp3" }
+                }
+            },
+            { // Phase 9
+                title: "Phase 9: The Final Act",
+                correct: 'B',
+                image: "https://github.com/1123-lab/Sim/blob/main/9.png?raw=true",
+                scenarioAudio: "https://github.com/1123-lab/Sim/raw/refs/heads/audio/scenario9.mp3",
+                scenario: `"The fire truck is finally in position, but the Fire Chief firmly refuses to send his men into the unfamiliar vessel. He says, 'My men don't know the layout. We can't risk it. We will give you a hose and all the water you need, but that's it.' You only have 2 crew left—Bosun and Chief Engineer—all including you on the main deck. By this time most of the materials inside have burned and the fire is much less. The accommodation module is still in danger but not on fire. The fire below continues, and you know a decision must be made now to save the vessel."`,
+                question: "What is your decision?",
+                decisions: {
+                    A: { text: "Give up the fight, deciding you can blame the fire brigade for their refusal later.", consequence: "You make the call to abandon the effort, planning to blame the fire brigade later. But the Bosun and Chief Engineer, haunted by the memory of their fallen friends, ignore your order. They grab the heavy hose from the fire brigade. With only one half-empty BA set, they descend into the hellish, smoky darkness. They successfully extinguish the last embers. They climb back onto the deck, and collapse. <strong class='text-red-700'>In this final heroic act, they inhaled a fatal amount of toxic smoke and fumes from the burnt plastics and chemicals. They die on the deck, having saved the vessel from total destruction at the cost of their own life. And then, there is only one. You, the Captain, are left standing alone amidst the silence, the smoke, and the wreckage, the sole survivor of your entire crew.</strong>", time: 5, deceased: 2, unknown: 0, externalDeceased: 0, audio: "https://github.com/1123-lab/Sim/raw/refs/heads/audio/consequenceP9A.mp3" },
+                    B: { text: "Order the Bosun and Chief Engineer to take the hose and extinguish the fire.", consequence: "You make the correct command decision to fight the fire, but with your last two men. Exhausted but resolute, haunted by the memory of their fallen friends, they take the heavy hose. With only one half-empty BA set, they descend into the hot, smoky darkness. They bravely attack the remaining fire and succeed. They climb over the hatch back onto the deck, and collapse. <strong class='text-red-700'>In this final heroic act, they inhaled a fatal amount of toxic smoke and fumes from the burnt plastics and chemicals. They die on the deck, having saved the vessel from total destruction at the cost of their own life.</strong> And then, there is only one. You, the Captain, are left standing alone amidst the silence, the smoke, and the wreckage, the sole survivor of your entire crew.", time: 3, deceased: 2, unknown: 0, externalDeceased: 0, audio: "https://github.com/1123-lab/Sim/raw/refs/heads/audio/consequenceP9B.mp3" },
+                    C: { text: "Try to reason with the Fire Chief again, showing him the Fire Plan of the vessel.", consequence: "You waste precious minutes arguing with the Fire Chief, who will not change his mind. While you are distracted, the Bosun and Chief Engineer, knowing time is running out, haunted by the memory of their fallen friends, make the decision for you. They grab the heavy hose. With half empty BA sets, they descend into the hot, smoky darkness. They succeed in extinguishing the fire. They climb over the hatch back onto the deck, and collapse. <strong class='text-red-700'>In this final heroic act, they inhaled a fatal amount of toxic smoke and fumes from the burnt plastics and chemicals. They die on the deck, having saved the vessel from total destruction at the cost of their own life. And then, there is only one. You, the Captain, are left standing alone amidst the-silence, the smoke, and the wreckage, the sole survivor of your entire crew.</strong>", time: 4, deceased: 2, unknown: 0, externalDeceased: 0, audio: "https://github.com/1123-lab/Sim/raw/refs/heads/audio/consequenceP9C.mp3" }
+                }
+            }
+        ];
+
+        function renderHeadcount(containerId, textContainerId, deceasedCount, unknownCount, crewTotal = totalCrew) {
+            const container = document.getElementById(containerId);
+            const textContainer = document.getElementById(textContainerId);
+            container.innerHTML = '';
+            
+            const aliveCount = crewTotal - deceasedCount - unknownCount;
+
+            for (let i = 0; i < crewTotal; i++) {
+                let iconClass = 'crew-icon';
+                if (i < deceasedCount) {
+                    iconClass += ' deceased';
+                } else if (i < deceasedCount + unknownCount) {
+                    iconClass += ' unknown';
+                } else {
+                    iconClass += ' alive';
+                }
+                
+                const iconHTML = `
+                    <svg class="${iconClass}" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="12" cy="6" r="2.5"/>
+                        <path d="M12 8.5V15M7 11l5-3 5 3M9 19l3-4 3 4"/>
+                        <line class="cross" x1="4" y1="4" x2="20" y2="20"/>
+                    </svg>
+                `;
+                container.innerHTML += iconHTML;
+            }
+            if (textContainer) {
+                 let statusString = `(${aliveCount}/${crewTotal} Alive`;
+                 if (unknownCount > 0) {
+                     statusString += `, ${unknownCount} Unknown`;
+                 }
+                 statusString += ')';
+                 textContainer.textContent = statusString;
+            }
+        }
+        
+        function toggleAudio(btn, audioSrc) {
+            if (!audioSrc || !audioSrc.startsWith('http')) {
+                console.warn('Skipping invalid audio source:', audioSrc);
+                return; 
+            }
+
+            const isNewAudio = currentAudioPlayer.src !== audioSrc;
+
+            if (isNewAudio) {
+                if (currentAudioBtn) {
+                    currentAudioBtn.innerHTML = playIconHTML;
+                }
+                currentAudioPlayer.src = audioSrc;
+                currentAudioBtn = btn;
+            }
+
+            if (currentAudioPlayer.paused) {
+                currentAudioPlayer.play().catch(e => console.error("Audio playback error:", e));
+                btn.innerHTML = pauseIconHTML;
+            } else {
+                currentAudioPlayer.pause();
+                btn.innerHTML = playIconHTML;
+            }
+        }
+        
+        currentAudioPlayer.onended = () => {
+            if(currentAudioBtn) {
+                currentAudioBtn.innerHTML = playIconHTML;
+                currentAudioBtn = null;
+            }
+        };
+
+        function stopAudio() {
+            currentAudioPlayer.pause();
+            currentAudioPlayer.currentTime = 0;
+            if (currentAudioBtn) {
+                currentAudioBtn.innerHTML = playIconHTML;
+                currentAudioBtn = null;
+            }
+        }
+
+        function showConsequence(decisionKey) {
+            stopAudio();
+            const phase = gamePhases[currentPhaseIndex];
+            const decision = phase.decisions[decisionKey];
+
+            // --- Hide scenario and decisions ---
+            document.getElementById('scenario-section').classList.add('hidden');
+            document.getElementById('decision-section').classList.add('hidden');
+
+            // --- Standard score and consequence logic ---
+            if (decisionKey === phase.correct) {
+                correctDecisionsCount++;
+            }
+            totalTimeLost += decision.time;
+            totalDeceased += decision.deceased;
+            totalUnknown += decision.unknown;
+            totalExternalDeceased += decision.externalDeceased;
+
+            document.getElementById('consequence-text').innerHTML = decision.consequence;
+            document.getElementById('time-lost').textContent = `${totalTimeLost} minutes`;
+            document.getElementById('correct-answer-status').textContent = `${correctDecisionsCount} of ${gamePhases.length}`;
+            renderHeadcount('headcount-visual', 'headcount-text', totalDeceased, totalUnknown);
+            document.getElementById('external-casualties-text').textContent = `(${totalExternalDeceased})`;
+
+            // --- Disable buttons ---
+            document.querySelectorAll('.decision-btn').forEach(button => {
+                button.disabled = true;
+                if (button.id === `btn${decisionKey}`) {
+                    button.classList.add('selected');
+                }
+            });
+            
+            // --- Image and Next Button Timer Logic ---
+            const fullscreenOverlay = document.getElementById('fullscreen-image-overlay');
+            const fullscreenImage = document.getElementById('fullscreen-image');
+            const nextButtonContainer = document.getElementById('next-phase-container');
+            const nextButton = document.getElementById('next-phase-btn');
+
+            const showResults = () => {
+                const consequenceBox = document.getElementById('consequence-box');
+                const scoreBox = document.getElementById('score-box');
+                consequenceBox.classList.remove('hidden');
+                scoreBox.classList.remove('hidden');
+                setTimeout(() => {
+                    consequenceBox.classList.remove('opacity-0', '-translate-y-4');
+                    scoreBox.classList.remove('opacity-0', '-translate-y-4');
+                }, 10);
+
+                // Add consequence audio button
+                const consequenceAudioBtnContainer = document.getElementById('consequence-audio-btn-container');
+                consequenceAudioBtnContainer.innerHTML = '';
+                if (decision.audio && decision.audio.startsWith('http')) {
+                    const btn = document.createElement('span');
+                    btn.className = 'audio-btn';
+                    btn.innerHTML = playIconHTML;
+                    btn.onclick = () => toggleAudio(btn, decision.audio);
+                    consequenceAudioBtnContainer.appendChild(btn);
+                }
+
+                if (currentPhaseIndex < gamePhases.length - 1) {
+                    nextButton.textContent = 'Next Phase';
+                    nextButton.onclick = loadNextPhase;
+                } else {
+                    nextButton.textContent = 'Final Score';
+                    nextButton.onclick = showFinalScore;
+                }
+                nextButtonContainer.classList.remove('hidden');
+            };
+
+            if (phase.image) {
+                fullscreenImage.src = phase.image;
+                fullscreenImage.onload = () => {
+                    fullscreenOverlay.classList.remove('hidden');
+                    setTimeout(() => {
+                        fullscreenOverlay.classList.add('hidden');
+                        showResults();
+                    }, 5000); // 5 seconds
+                };
+                fullscreenImage.onerror = () => {
+                    console.error("Image failed to load:", phase.image);
+                    showResults(); // Skip image if it fails to load
+                };
+
+            } else {
+                // If there's no image, just show the results immediately
+                showResults();
+            }
+        }
+        
+        function showFinalScore() {
+            document.getElementById('simulation-page').classList.add('hidden');
+            const finalPage = document.getElementById('final-page');
+            
+            document.getElementById('final-correct-decisions').textContent = `${correctDecisionsCount} of ${gamePhases.length}`;
+            document.getElementById('final-time-lost').textContent = `${totalTimeLost} minutes`;
+            renderHeadcount('final-headcount-visual', 'final-headcount-text', totalDeceased, totalUnknown);
+            document.getElementById('final-external-casualties-text').textContent = `(${totalExternalDeceased})`;
+
+            finalPage.classList.remove('hidden');
+        }
+
+        function loadPhase(phaseIndex) {
+            stopAudio();
+            const phase = gamePhases[phaseIndex];
+            document.getElementById('phase-title').textContent = phase.title;
+            document.getElementById('scenario-text').innerHTML = phase.scenario;
+            document.getElementById('decision-question').textContent = phase.question;
+            
+             // --- Make sure scenario and decisions are visible ---
+            document.getElementById('scenario-section').classList.remove('hidden');
+            document.getElementById('decision-section').classList.remove('hidden');
+
+            // Add scenario audio button
+            const scenarioAudioBtnContainer = document.getElementById('scenario-audio-btn-container');
+            scenarioAudioBtnContainer.innerHTML = '';
+             if (phase.scenarioAudio && phase.scenarioAudio.startsWith('http')) {
+                const btn = document.createElement('span');
+                btn.className = 'audio-btn';
+                btn.innerHTML = playIconHTML;
+                btn.onclick = () => toggleAudio(btn, phase.scenarioAudio);
+                scenarioAudioBtnContainer.appendChild(btn);
+            }
+
+            const buttonsContainer = document.getElementById('decision-buttons');
+            buttonsContainer.innerHTML = '';
+
+            for (const key in phase.decisions) {
+                const decision = phase.decisions[key];
+                const button = document.createElement('button');
+                button.id = `btn${key}`;
+                button.className = "decision-btn w-full bg-red-600 text-white p-4 rounded-lg shadow-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 text-left space-y-2";
+                button.onclick = () => showConsequence(key);
+                button.innerHTML = `<span class="font-bold text-lg">${key})</span><span class="block">${decision.text}</span>`;
+                buttonsContainer.appendChild(button);
+            }
+            
+            // Hide elements from previous phase
+            document.getElementById('consequence-box').classList.add('hidden', 'opacity-0', '-translate-y-4');
+            document.getElementById('score-box').classList.add('hidden', 'opacity-0', '-translate-y-4');
+            document.getElementById('next-phase-container').classList.add('hidden');
+            document.getElementById('final-page').classList.add('hidden');
+        }
+        
+        function loadNextPhase() {
+            currentPhaseIndex++;
+            if (currentPhaseIndex < gamePhases.length) {
+                loadPhase(currentPhaseIndex);
+            }
+        }
+
+        function restartGame() {
+            stopAudio();
+            currentPhaseIndex = 0;
+            totalTimeLost = 0;
+            totalDeceased = 0;
+            totalUnknown = 0;
+            totalExternalDeceased = 0;
+            correctDecisionsCount = 0;
+            document.getElementById('simulation-page').classList.add('hidden');
+            document.getElementById('final-page').classList.add('hidden');
+            document.getElementById('start-page').classList.remove('hidden');
+        }
+        
+        function startSimulation() {
+            document.getElementById('start-page').classList.add('hidden');
+            document.getElementById('simulation-page').classList.remove('hidden');
+            loadPhase(0);
+        }
+
+        // Initial load
+        window.onload = () => {
+            document.getElementById('simulation-page').classList.add('hidden');
+            document.getElementById('final-page').classList.add('hidden');
+            document.getElementById('start-page').classList.remove('hidden');
+        };
+    </script>
+
+</body>
+</html>
