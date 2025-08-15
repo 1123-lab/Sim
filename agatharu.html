@@ -466,7 +466,7 @@
             const soundUrl = isDangerous ? dangerSoundUrl : safeSoundUrl;
             if (soundUrl && soundUrl.startsWith('http')) {
                 sfxPlayer.src = soundUrl;
-                sfxPlayer.volume = 0.2;
+                sfxPlayer.volume = 1.0;
                 sfxPlayer.play().catch(e => console.error("SFX playback error:", e));
             }
         }
@@ -720,4 +720,5 @@
 
 </body>
 </html>
+
 
