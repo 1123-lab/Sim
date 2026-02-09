@@ -8,157 +8,152 @@
     <link href="https://cdn.jsdelivr.net/npm/flowbite@2.4.1/dist/flowbite.min.css  " rel="stylesheet" />
     <style>
         * {
-            /* Changed: Set font to ProximaNova-Regular */
-            font-family: 'ProximaNova-Regular', Helvetica, Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
             font-weight: 300;
         }
         
-        /* Updated: Lighter background color scheme based on red/pink */
-        body {
-            /* Changed: Replaced previous background with a light, transparent red/pink radial gradient */
-            background: radial-gradient(circle, rgba(255, 182, 193, 0.15) 0%, rgba(255, 228, 225, 0.1) 100%);
-            background-attachment: fixed;
-            min-height: 100vh;
-        }
-
-        /* Updated: Lighter transparent background for glass elements */
+        /* Updated: Red color scheme with transparency */
         .glass-card {
-            /* Changed: Use a very light blue for card background to stand out against the red/pink bg */
-            background: rgba(16, 69, 110, 0.1); /* Light version of the requested blue */
+            /* Changed: Made red background more transparent */
+            background: rgba(220, 38, 38, 0.1); /* Originally 0.15 */
             backdrop-filter: blur(20px);
-            border: 1px solid rgba(16, 69, 110, 0.2); /* Border matching the blue */
+            /* Changed: Made red border more transparent */
+            border: 1px solid rgba(220, 38, 38, 0.15); /* Originally 0.2 */
             transition: all 0.3s ease;
             /* Added: Blue box-shadow for the transparent blue edge effect */
             box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.1), 0 2px 4px -2px rgba(59, 130, 246, 0.1); /* Using blue-400/500 approx RGB */
         }
         .glass-card:hover {
-            /* Changed: Slightly more opaque background on hover */
-            background: rgba(16, 69, 110, 0.15);
+            /* Changed: Made hover background slightly more opaque but still transparent */
+            background: rgba(220, 38, 38, 0.15); /* Originally 0.25 */
             transform: translateY(-5px);
-            /* Changed: Enhanced blue glow on hover */
+            /* Changed: Made hover shadow red with blue overlay effect */
             box-shadow: 
-                0 20px 40px rgba(16, 69, 110, 0.1), /* Shadow using the requested blue */
+                0 20px 40px rgba(220, 38, 38, 0.1), /* Original red shadow, reduced opacity */
                 0 0 20px rgba(59, 130, 246, 0.3); /* Added blue glow */
         }
         
-        .glass-nav {
-            /* Changed: Lighter red/pink background for nav */
-            background: rgba(255, 182, 193, 0.2); /* Light Pinkish/peachy, more transparent */
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(255, 182, 193, 0.25); /* Lighter border */
-        }
-        
-        .glass-sidebar {
-            /* Changed: Lighter red/pink background for sidebar */
-            background: rgba(255, 182, 193, 0.2); /* Light Pinkish/peachy, more transparent */
-            backdrop-filter: blur(20px);
-            border-right: 1px solid rgba(255, 182, 193, 0.25); /* Lighter border */
-        }
-        
-        .glass-modal {
-            /* Changed: Lighter background for modals, keeping it readable */
-            background: rgba(255, 248, 248, 0.95); /* Very light pink/white */
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 182, 193, 0.3); /* Lighter border */
-        }
-        
-        /* Updated: Sidebar item styling */
-        .sidebar-item {
-            background: rgba(255, 182, 193, 0.15); /* Lighter background */
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 182, 193, 0.2); /* Lighter border */
-            transition: all 0.3s ease;
-        }
-        .sidebar-item:hover {
-            background: rgba(255, 182, 193, 0.25); /* Slightly darker on hover */
-            transform: translateX(5px);
-        }
-        
-        /* Updated: Button styling */
         .apple-button {
-            background: rgba(255, 182, 193, 0.15); /* Lighter button background */
+            background: rgba(220, 38, 38, 0.2); /* Transparent red */
             backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 182, 193, 0.25); /* Lighter border */
+            border: 1px solid rgba(220, 38, 38, 0.3); /* Red border */
             transition: all 0.3s ease;
-            color: #7f1d1d; /* Dark red text for contrast */
+            color: white;
         }
         .apple-button:hover {
-            background: rgba(255, 182, 193, 0.3); /* Slightly darker on hover */
+            background: rgba(220, 38, 38, 0.35); /* Darker red on hover */
+            transform: translateY(-1px);
+            box-shadow: 0 8px 25px rgba(220, 38, 38, 0.25); /* Red shadow */
+        }
+        .apple-button:active {
+            transform: translateY(0);
         }
         
         .apple-button-primary {
-            background: rgba(220, 38, 38, 0.9); /* Kept the primary button red for action emphasis */
+            background: rgba(185, 28, 28, 0.9); /* Darker red for primary */
             backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 182, 193, 0.5);
+            border: 1px solid rgba(220, 38, 38, 0.5);
         }
         .apple-button-primary:hover {
-            background: rgba(153, 27, 27, 0.95); /* Darker red on hover */
+            background: rgba(153, 27, 27, 0.95); /* Even darker red on hover */
+            transform: translateY(-1px);
+            box-shadow: 0 8px 25px rgba(220, 38, 38, 0.4); /* Red shadow */
         }
         
         .apple-button-disabled {
-            background: rgba(255, 182, 193, 0.1); /* Very light background */
+            background: rgba(220, 38, 38, 0.1);
             backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 182, 193, 0.1);
+            border: 1px solid rgba(220, 38, 38, 0.1);
             opacity: 0.6;
         }
         
-        /* Updated: Image overlay */
-        .image-overlay {
-            /* Changed: Lighter overlay gradient based on red/pink */
-            background: linear-gradient(45deg, rgba(255, 182, 193, 0.2), rgba(255, 228, 225, 0.2));
-        }
-
-        /* Updated: Text color adjustments for better contrast on new background */
-        .text-white {
-             color: #4a5568; /* Changed to a dark gray for better readability on light background */
-        }
-        .text-white.text-opacity-90 {
-             color: #4a5568 !important; /* Ensured dark gray with high specificity */
-             opacity: 0.9 !important;
+        .glass-sidebar {
+            /* Changed: Made sidebar background more transparent */
+            background: rgba(127, 29, 29, 0.15); /* Originally 0.2 */
+            backdrop-filter: blur(20px);
+            /* Changed: Made sidebar border more transparent */
+            border-right: 1px solid rgba(220, 38, 38, 0.15); /* Originally 0.2 */
         }
         
-        /* Updated: Specific styles for modal content text */
+        .glass-nav {
+            /* Changed: Made nav background more transparent */
+            background: rgba(127, 29, 29, 0.2); /* Originally 0.25 */
+            backdrop-filter: blur(20px);
+            /* Changed: Made nav border more transparent */
+            border-bottom: 1px solid rgba(220, 38, 38, 0.15); /* Originally 0.2 */
+        }
+        
+        .glass-modal {
+            background: rgba(254, 242, 242, 0.95); /* Very light red/white for readability */
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(220, 38, 38, 0.2); /* Red border */
+        }
+        
+        /* Updated: Change text color inside modals to dark red/black */
         .glass-modal .text-white,
         .glass-modal .text-white.text-opacity-90,
         .glass-modal h3,
         .glass-modal p,
         .glass-modal a {
-            color: #7f1d1d !important; /* Keep original dark red inside modals */
+            color: #7f1d1d !important; /* Dark red text color inside modals */
         }
         
-        /* Updated: Close button inside modals */
+        /* Updated: Make close buttons darker inside modals for better visibility */
         .glass-modal .apple-button {
-            background: rgba(255, 182, 193, 0.15); /* Lighter background */
-            border: 1px solid rgba(255, 182, 193, 0.25); /* Lighter border */
+            background: rgba(220, 38, 38, 0.2); /* Red transparent background */
+            border: 1px solid rgba(220, 38, 38, 0.3); /* Red border */
             color: #7f1d1d !important; /* Dark red text */
         }
         .glass-modal .apple-button:hover {
-            background: rgba(255, 182, 193, 0.3); /* Slightly darker on hover */
+            background: rgba(220, 38, 38, 0.35); /* Darker red on hover */
+        }
+        
+        /* Updated: Red gradient background */
+        body {
+            background: linear-gradient(135deg, #7f1d1d 0%, #991b1b 25%, #b91c1c 50%, #dc2626 75%, #ef4444 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+        }
+        
+        .sidebar-item {
+            background: rgba(220, 38, 38, 0.1); /* Transparent red */
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(220, 38, 38, 0.15); /* Red border */
+            transition: all 0.3s ease;
+        }
+        .sidebar-item:hover {
+            background: rgba(220, 38, 38, 0.25); /* Darker red on hover */
+            transform: translateX(5px);
+        }
+        
+        /* Updated: Red image overlay */
+        .image-overlay {
+            background: linear-gradient(45deg, rgba(220, 38, 38, 0.3), rgba(239, 68, 68, 0.3)); /* Red gradient */
         }
     </style>
 </head>
 <body>
     <!-- Background overlay -->
-    <div class="absolute inset-0 bg-pink-50 bg-opacity-20"></div> <!-- Kept for potential layering if needed, but main bg is set on body -->
-
+    <div class="absolute inset-0 bg-red-900 bg-opacity-20"></div>
+    
     <nav class="glass-nav fixed top-0 z-50 w-full">
         <div class="px-3 py-3 lg:px-5 lg:pl-3">
             <div class="flex items-center justify-between">
                 <div class="flex items-center justify-start rtl:justify-end">
-                    <button data-drawer-target="logo-sidebar" data-drawer-toggle="logo-sidebar" aria-controls="logo-sidebar" type="button" class="apple-button inline-flex items-center p-2 text-sm text-gray-700 rounded-lg sm:hidden"> <!-- Changed text color -->
+                    <button data-drawer-target="logo-sidebar" data-drawer-toggle="logo-sidebar" aria-controls="logo-sidebar" type="button" class="apple-button inline-flex items-center p-2 text-sm text-white rounded-lg sm:hidden">
                         <span class="sr-only">Open sidebar</span>
                         <svg class="w-6 h-6" aria-hidden="true" fill="currentColor" viewBox="0 0 24 24">
                             <path fill-rule="evenodd" d="M3 6.75A.75.75 0 013.75 6h16.5a.75.75 0 010 1.5H3.75A.75.75 0 013 6.75zM3 12a.75.75 0 01.75-.75h16.5a.75.75 0 010 1.5H3.75A.75.75 0 013 12zm0 5.25a.75.75 0 01.75-.75h16.5a.75.75 0 010 1.5H3.75a.75.75 0 01-.75-.75z" clip-rule="evenodd"/>
                         </svg>
                     </button>
                     <a href="#" class="flex ms-2 md:me-24">
-                        <span class="self-center text-xl font-light sm:text-2xl whitespace-nowrap text-gray-700">Nautical Incidents Lab</span> <!-- Changed text color -->
+                        <span class="self-center text-xl font-light sm:text-2xl whitespace-nowrap text-white">Nautical Incidents Lab</span>
                     </a>
                 </div>
                 <div class="flex items-center">
                     <button type="button" class="apple-button flex text-sm rounded-full p-1" aria-expanded="false">
                         <span class="sr-only">Open user menu</span>
-                        <div class="w-8 h-8 rounded-full bg-gradient-to-r from-pink-300 to-pink-500 flex items-center justify-center"> <!-- Changed icon color -->
+                        <div class="w-8 h-8 rounded-full bg-gradient-to-r from-red-400 to-red-600 flex items-center justify-center">
                             <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                             </svg>
@@ -168,13 +163,13 @@
             </div>
         </div>
     </nav>
-
+    
     <aside id="logo-sidebar" class="glass-sidebar fixed top-0 left-0 z-40 w-64 h-screen pt-20 transition-transform -translate-x-full sm:translate-x-0" aria-label="Sidebar">
         <div class="h-full px-3 pb-4 overflow-y-auto">
             <ul class="space-y-3 font-medium">
                 <li>
-                    <a href="#" class="sidebar-item flex items-center p-3 text-gray-700 rounded-xl group" data-modal-target="dashboard-modal" data-modal-toggle="dashboard-modal"> <!-- Changed text color -->
-                        <svg class="w-5 h-5 text-gray-700 transition duration-75 group-hover:text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"> <!-- Changed icon color -->
+                    <a href="#" class="sidebar-item flex items-center p-3 text-white rounded-xl group" data-modal-target="dashboard-modal" data-modal-toggle="dashboard-modal">
+                        <svg class="w-5 h-5 text-white transition duration-75 group-hover:text-red-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z"/>
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 15l4-4 4 4"/>
                         </svg>
@@ -182,25 +177,25 @@
                     </a>
                 </li>
                 <li>
-                    <a href="#" class="sidebar-item flex items-center p-3 text-gray-700 rounded-xl group"> <!-- Changed text color -->
-                        <svg class="w-5 h-5 text-gray-700 transition duration-75 group-hover:text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"> <!-- Changed icon color -->
+                    <a href="#" class="sidebar-item flex items-center p-3 text-white rounded-xl group">
+                        <svg class="w-5 h-5 text-white transition duration-75 group-hover:text-red-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
                         </svg>
                         <span class="flex-1 ms-3 whitespace-nowrap">Intro Simulation</span>
                     </a>
                 </li>
                 <li>
-                    <a href="#" class="sidebar-item flex items-center p-3 text-gray-700 rounded-xl group" data-modal-target="more-sims-modal" data-modal-toggle="more-sims-modal"> <!-- Changed text color -->
-                        <svg class="w-5 h-5 text-gray-700 transition duration-75 group-hover:text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"> <!-- Changed icon color -->
+                    <a href="#" class="sidebar-item flex items-center p-3 text-white rounded-xl group" data-modal-target="more-sims-modal" data-modal-toggle="more-sims-modal">
+                        <svg class="w-5 h-5 text-white transition duration-75 group-hover:text-red-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 011-1.732l4-2.5a1 1 0 011 0l4 2.5A1 1 0 0118 5v2M7 7h10"/>
                         </svg>
                         <span class="flex-1 ms-3 whitespace-nowrap">More Simulations</span>
-                        <span class="apple-button inline-flex items-center justify-center px-2 ms-3 text-sm font-medium text-gray-700 rounded-full">Pro</span> <!-- Changed text color -->
+                        <span class="apple-button inline-flex items-center justify-center px-2 ms-3 text-sm font-medium text-white rounded-full">Pro</span>
                     </a>
                 </li>
                 <li>
-                    <a href="#" class="sidebar-item flex items-center p-3 text-gray-700 rounded-xl group" data-modal-target="about-modal" data-modal-toggle="about-modal"> <!-- Changed text color -->
-                        <svg class="w-5 h-5 text-gray-700 transition duration-75 group-hover:text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"> <!-- Changed icon color -->
+                    <a href="#" class="sidebar-item flex items-center p-3 text-white rounded-xl group" data-modal-target="about-modal" data-modal-toggle="about-modal">
+                        <svg class="w-5 h-5 text-white transition duration-75 group-hover:text-red-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                         </svg>
                         <span class="flex-1 ms-3 whitespace-nowrap">About</span>
@@ -209,11 +204,11 @@
             </ul>
         </div>
     </aside>
-
+    
     <div class="p-4 sm:ml-64 relative z-10">
         <div class="p-4 mt-14">
-            <h1 class="text-4xl font-light text-gray-700 mb-2">Intro Simulation</h1> <!-- Changed text color -->
-            <p class="text-lg text-gray-700 text-opacity-80 mt-2 mb-8">Begin Your First Incident Simulation Journey</p> <!-- Changed text color -->
+            <h1 class="text-4xl font-light text-white mb-2">Intro Simulation</h1>
+            <p class="text-lg text-white text-opacity-80 mt-2 mb-8">Begin Your First Incident Simulation Journey</p>
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 <!-- Simulation Card: Agatha -->
                 <div class="glass-card max-w-sm rounded-2xl shadow-2xl flex flex-col overflow-hidden">
@@ -223,9 +218,9 @@
                     </a>
                     <div class="p-6 flex flex-col flex-grow">
                         <a href="https://1123-lab.github.io/Sim/agathaen.html  ">
-                            <h5 class="mb-3 text-2xl font-semibold tracking-tight text-gray-700">Incident on 'Agatha'</h5> <!-- Changed text color -->
+                            <h5 class="mb-3 text-2xl font-semibold tracking-tight text-white">Incident on 'Agatha'</h5>
                         </a>
-                        <p class="mb-4 font-normal text-gray-700 text-opacity-80 flex-grow leading-relaxed">A high-fidelity simulation of a fire incident aboard an accommodation vessel. Make critical decisions as the Captain and see the consequences of your actions.</p> <!-- Changed text color -->
+                        <p class="mb-4 font-normal text-white text-opacity-80 flex-grow leading-relaxed">A high-fidelity simulation of a fire incident aboard an accommodation vessel. Make critical decisions as the Captain and see the consequences of your actions.</p>
                         <div class="mt-auto flex flex-col space-y-3">
                             <a href="https://1123-lab.github.io/Sim/agathaen.html  " class="apple-button-primary inline-flex items-center justify-center px-6 py-3 text-sm font-medium text-center text-white rounded-xl">
                                 Launch Simulation
@@ -233,13 +228,13 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
                                 </svg>
                             </a>
-                            <button type="button" data-modal-target="agatha-modal" data-modal-toggle="agatha-modal" class="apple-button w-full text-gray-700 font-medium rounded-xl text-sm px-5 py-3 text-center"> <!-- Changed text color -->
+                            <button type="button" data-modal-target="agatha-modal" data-modal-toggle="agatha-modal" class="apple-button w-full text-white font-medium rounded-xl text-sm px-5 py-3 text-center">
                                 Learn More
                             </button>
                         </div>
                     </div>
                 </div>
-
+                
                 <!-- Russian Simulation Card -->
                 <div class="glass-card max-w-sm rounded-2xl shadow-2xl flex flex-col overflow-hidden">
                     <a href="https://1123-lab.github.io/Sim/agatharu.html  " class="relative">
@@ -248,9 +243,9 @@
                     </a>
                     <div class="p-6 flex flex-col flex-grow">
                         <a href="https://1123-lab.github.io/Sim/agatharu.html  ">
-                            <h5 class="mb-3 text-2xl font-semibold tracking-tight text-gray-700">Инцидент на 'Агате'</h5> <!-- Changed text color -->
+                            <h5 class="mb-3 text-2xl font-semibold tracking-tight text-white">Инцидент на 'Агате'</h5>
                         </a>
-                        <p class="mb-4 font-normal text-gray-700 text-opacity-80 flex-grow leading-relaxed">Высокоточная симуляция пожара на борту жилого судна. Принимайте критические решения как Капитан и наблюдайте за последствиями ваших действий.</p> <!-- Changed text color -->
+                        <p class="mb-4 font-normal text-white text-opacity-80 flex-grow leading-relaxed">Высокоточная симуляция пожара на борту жилого судна. Принимайте критические решения как Капитан и наблюдайте за последствиями ваших действий.</p>
                         <div class="mt-auto flex flex-col space-y-3">
                             <a href="https://1123-lab.github.io/Sim/agatharu.html  " class="apple-button-primary inline-flex items-center justify-center px-6 py-3 text-sm font-medium text-center text-white rounded-xl">
                                 Запустить симуляцию
@@ -258,7 +253,7 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
                                 </svg>
                             </a>
-                            <button type="button" data-modal-target="russian-modal" data-modal-toggle="russian-modal" class="apple-button w-full text-gray-700 font-medium rounded-xl text-sm px-5 py-3 text-center"> <!-- Changed text color -->
+                            <button type="button" data-modal-target="russian-modal" data-modal-toggle="russian-modal" class="apple-button w-full text-white font-medium rounded-xl text-sm px-5 py-3 text-center">
                                 Узнать больше
                             </button>
                         </div>
@@ -267,174 +262,161 @@
             </div>
         </div>
     </div>
-
+    
     <!-- Dashboard Modal -->
     <div id="dashboard-modal" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
         <div class="relative p-4 w-full max-w-2xl max-h-full">
             <div class="glass-modal relative rounded-2xl shadow-2xl">
-                <div class="flex items-center justify-between p-6 border-b border-pink-200 rounded-t"> <!-- Changed border color -->
-                    <h3 class="text-xl font-semibold text-gray-700"> <!-- Changed text color -->
+                <div class="flex items-center justify-between p-6 border-b border-red-200 rounded-t">
+                    <h3 class="text-xl font-semibold">
                         About: Home
                     </h3>
-                    <button type="button" class="apple-button hover:bg-pink-100 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center" data-modal-hide="dashboard-modal">
-                        <svg class="w-4 h-4 text-gray-700" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"> <!-- Changed icon color -->
+                    <button type="button" class="apple-button hover:bg-red-100 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center" data-modal-hide="dashboard-modal">
+                        <svg class="w-4 h-4" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                         </svg>
                         <span class="sr-only">Close modal</span>
                     </button>
                 </div>
                 <div class="p-6 space-y-4">
-                    <p class="text-base leading-relaxed text-gray-700"> <!-- Changed text color -->
+                    <p class="text-base leading-relaxed">
                         Welcome to the Nautical Incident Lab, your central hub for maritime safety training. From here, you can access all available simulation scenarios, track your progress, and manage your training sessions. The dashboard provides an overview of completed simulations, performance statistics, and recommendations for further training based on your current skill level and areas that need improvement.
                     </p>
                 </div>
-                <div class="flex items-center p-6 border-t border-pink-200 rounded-b"> <!-- Changed border color -->
-                    <button data-modal-hide="dashboard-modal" type="button" class="apple-button py-3 px-6 ms-3 text-sm font-medium rounded-xl text-gray-700"> <!-- Changed text color -->
-                        Close
-                    </button>
+                <div class="flex items-center p-6 border-t border-red-200 rounded-b">
+                    <button data-modal-hide="dashboard-modal" type="button" class="apple-button py-3 px-6 ms-3 text-sm font-medium rounded-xl">Close</button>
                 </div>
             </div>
         </div>
     </div>
-
+    
     <!-- More Simulations Modal -->
     <div id="more-sims-modal" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
         <div class="relative p-4 w-full max-w-2xl max-h-full">
             <div class="glass-modal relative rounded-2xl shadow-2xl">
-                <div class="flex items-center justify-between p-6 border-b border-pink-200 rounded-t"> <!-- Changed border color -->
-                    <h3 class="text-xl font-semibold text-gray-700"> <!-- Changed text color -->
+                <div class="flex items-center justify-between p-6 border-b border-red-200 rounded-t">
+                    <h3 class="text-xl font-semibold">
                         About: More Simulations
                     </h3>
-                    <button type="button" class="apple-button hover:bg-pink-100 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center" data-modal-hide="more-sims-modal">
-                        <svg class="w-4 h-4 text-gray-700" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"> <!-- Changed icon color -->
+                    <button type="button" class="apple-button hover:bg-red-100 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center" data-modal-hide="more-sims-modal">
+                        <svg class="w-4 h-4" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                         </svg>
                         <span class="sr-only">Close modal</span>
                     </button>
                 </div>
                 <div class="p-6 space-y-4">
-                    <p class="text-base leading-relaxed text-gray-700"> <!-- Changed text color -->
+                    <p class="text-base leading-relaxed">
                         Expand your maritime safety expertise with our premium simulation library. This Pro feature unlocks access to additional incident scenarios covering various vessel types, emergency situations, and maritime environments. Scenarios include cargo vessel fires, passenger ship evacuations, oil spill responses, collision avoidance, and severe weather navigation. Each simulation is based on real maritime incidents and designed by industry experts to provide comprehensive emergency response training.
                     </p>
                 </div>
-                <div class="flex items-center p-6 border-t border-pink-200 rounded-b"> <!-- Changed border color -->
-                    <button data-modal-hide="more-sims-modal" type="button" class="apple-button py-3 px-6 ms-3 text-sm font-medium rounded-xl text-gray-700"> <!-- Changed text color -->
-                        Close
-                    </button>
+                <div class="flex items-center p-6 border-t border-red-200 rounded-b">
+                    <button data-modal-hide="more-sims-modal" type="button" class="apple-button py-3 px-6 ms-3 text-sm font-medium rounded-xl">Close</button>
                 </div>
             </div>
         </div>
     </div>
-
+    
     <!-- About Modal -->
     <div id="about-modal" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
         <div class="relative p-4 w-full max-w-2xl max-h-full">
             <div class="glass-modal relative rounded-2xl shadow-2xl">
-                <div class="flex items-center justify-between p-6 border-b border-pink-200 rounded-t"> <!-- Changed border color -->
-                    <h3 class="text-xl font-semibold text-gray-700"> <!-- Changed text color -->
+                <div class="flex items-center justify-between p-6 border-b border-red-200 rounded-t">
+                    <h3 class="text-xl font-semibold">
                         About: Nautical Incidents Lab
                     </h3>
-                    <button type="button" class="apple-button hover:bg-pink-100 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center" data-modal-hide="about-modal">
-                        <svg class="w-4 h-4 text-gray-700" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"> <!-- Changed icon color -->
+                    <button type="button" class="apple-button hover:bg-red-100 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center" data-modal-hide="about-modal">
+                        <svg class="w-4 h-4" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                         </svg>
                         <span class="sr-only">Close modal</span>
                     </button>
                 </div>
                 <div class="p-6 space-y-4">
-                    <p class="text-base leading-relaxed text-gray-700"> <!-- Changed text color -->
+                    <p class="text-base leading-relaxed">
                         The Nautical Incidents Lab is an advanced maritime safety training platform designed to prepare maritime professionals for real-world emergency situations. Our simulations are based on actual maritime incidents that have occurred over the past decades, with details carefully modified for educational purposes. The platform was developed in collaboration with maritime safety experts, ship captains, and emergency response specialists to ensure authentic and effective training experiences that can save lives at sea.
                     </p>
                 </div>
-                <div class="flex items-center p-6 border-t border-pink-200 rounded-b"> <!-- Changed border color -->
-                    <button data-modal-hide="about-modal" type="button" class="apple-button py-3 px-6 ms-3 text-sm font-medium rounded-xl text-gray-700"> <!-- Changed text color -->
-                        Close
-                    </button>
+                <div class="flex items-center p-6 border-t border-red-200 rounded-b">
+                    <button data-modal-hide="about-modal" type="button" class="apple-button py-3 px-6 ms-3 text-sm font-medium rounded-xl">Close</button>
                 </div>
             </div>
         </div>
     </div>
-
+    
     <!-- English Modal for Agatha -->
     <div id="agatha-modal" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
         <div class="relative p-4 w-full max-w-2xl max-h-full">
             <div class="glass-modal relative rounded-2xl shadow-2xl">
-                <div class="flex items-center justify-between p-6 border-b border-pink-200 rounded-t"> <!-- Changed border color -->
-                    <h3 class="text-xl font-semibold text-gray-700"> <!-- Changed text color -->
+                <div class="flex items-center justify-between p-6 border-b border-red-200 rounded-t">
+                    <h3 class="text-xl font-semibold">
                         About: Incident on 'Agatha'
                     </h3>
-                    <button type="button" class="apple-button hover:bg-pink-100 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center" data-modal-hide="agatha-modal">
-                        <svg class="w-4 h-4 text-gray-700" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"> <!-- Changed icon color -->
+                    <button type="button" class="apple-button hover:bg-red-100 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center" data-modal-hide="agatha-modal">
+                        <svg class="w-4 h-4" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                         </svg>
                         <span class="sr-only">Close modal</span>
                     </button>
                 </div>
                 <div class="p-6 space-y-4">
-                    <p class="text-base leading-relaxed text-gray-700"> <!-- Changed text color -->
+                    <p class="text-base leading-relaxed">
                         The simulation you are about to start is based on a real incident that unfolded 20 years ago, on the real vessel with the same number of crew aboard, but its details altered for the purpose of this simulation.
                     </p>
-                    <p class="text-base leading-relaxed text-gray-700"> <!-- Changed text color -->
+                    <p class="text-base leading-relaxed">
                         You are the Captain of the vessel 'Agatha'. Your objective is to navigate through the nine phases of a developing emergency. At each phase, you will be presented with a scenario and three possible decisions. Choose the action you believe is most effective. Your performance will be evaluated based on the consequences of your choices. Your final score will account for the number of correct decisions made, the total time spent, and, most importantly, preventing crew and external casualties.
                     </p>
                 </div>
-                <div class="flex items-center p-6 border-t border-pink-200 rounded-b"> <!-- Changed border color -->
-                    <a href="https://1123-lab.github.io/Sim/agathaen.html  " class="apple-button-primary font-medium rounded-xl text-sm px-6 py-3 text-center text-white"> <!-- Kept white text for primary button -->
-                        Launch Simulation
-                    </a>
-                    <button data-modal-hide="agatha-modal" type="button" class="apple-button py-3 px-6 ms-3 text-sm font-medium rounded-xl text-gray-700"> <!-- Changed text color -->
-                        Close
-                    </button>
+                <div class="flex items-center p-6 border-t border-red-200 rounded-b">
+                    <a href="https://1123-lab.github.io/Sim/agathaen.html  " class="apple-button-primary font-medium rounded-xl text-sm px-6 py-3 text-center">Launch Simulation</a>
+                    <button data-modal-hide="agatha-modal" type="button" class="apple-button py-3 px-6 ms-3 text-sm font-medium rounded-xl">Close</button>
                 </div>
             </div>
         </div>
     </div>
-
+    
     <!-- Russian Modal -->
     <div id="russian-modal" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
         <div class="relative p-4 w-full max-w-2xl max-h-full">
             <div class="glass-modal relative rounded-2xl shadow-2xl">
-                <div class="flex items-center justify-between p-6 border-b border-pink-200 rounded-t"> <!-- Changed border color -->
-                    <h3 class="text-xl font-semibold text-gray-700"> <!-- Changed text color -->
+                <div class="flex items-center justify-between p-6 border-b border-red-200 rounded-t">
+                    <h3 class="text-xl font-semibold">
                         О программе: Инцидент на 'Агате'
                     </h3>
-                    <button type="button" class="apple-button hover:bg-pink-100 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center" data-modal-hide="russian-modal">
-                        <svg class="w-4 h-4 text-gray-700" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"> <!-- Changed icon color -->
+                    <button type="button" class="apple-button hover:bg-red-100 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center" data-modal-hide="russian-modal">
+                        <svg class="w-4 h-4" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                         </svg>
                         <span class="sr-only">Закрыть модальное окно</span>
                     </button>
                 </div>
                 <div class="p-6 space-y-4">
-                    <p class="text-base leading-relaxed text-gray-700"> <!-- Changed text color -->
+                    <p class="text-base leading-relaxed">
                         Эта симуляция основана на реальном инциденте, который произошел 20 лет назад. Вы возьмете на себя роль капитана жилого судна 'Агата' во время развивающейся чрезвычайной ситуации.
                     </p>
-                    <p class="text-base leading-relaxed text-gray-700"> <!-- Changed text color -->
+                    <p class="text-base leading-relaxed">
                         Ваша цель - пройти девять фаз инцидента, принимая наиболее эффективные решения на каждом этапе. Ваша работа будет оцениваться по правильности решений, управлению временем и, что самое важное, безопасности вашей команды и предотвращению внешних жертв. Обратите пристальное внимание на предоставленные детали, так как они критически важны для успешного исхода.
                     </p>
                 </div>
-                <div class="flex items-center p-6 border-t border-pink-200 rounded-b"> <!-- Changed border color -->
-                    <a href="https://1123-lab.github.io/Sim/agatharu.html  " class="apple-button-primary font-medium rounded-xl text-sm px-6 py-3 text-center text-white"> <!-- Kept white text for primary button -->
-                        Запустить симуляцию
-                    </a>
-                    <button data-modal-hide="russian-modal" type="button" class="apple-button py-3 px-6 ms-3 text-sm font-medium rounded-xl text-gray-700"> <!-- Changed text color -->
-                        Закрыть
-                    </button>
+                <div class="flex items-center p-6 border-t border-red-200 rounded-b">
+                    <a href="https://1123-lab.github.io/Sim/agatharu.html  " class="apple-button-primary font-medium rounded-xl text-sm px-6 py-3 text-center">Запустить симуляцию</a>
+                    <button data-modal-hide="russian-modal" type="button" class="apple-button py-3 px-6 ms-3 text-sm font-medium rounded-xl">Закрыть</button>
                 </div>
             </div>
         </div>
     </div>
-
+    
     <!-- Footer -->
     <footer class="relative z-10 mt-16">
-        <!-- Changed: Footer background gradient to the requested blue color rgb(16, 69, 110) -->
-        <div class="bg-gradient-to-r from-[rgb(16,69,110)] to-[rgb(16,69,110)] py-6">
+        <!-- Changed: Footer background gradient to blue -->
+        <div class="bg-gradient-to-r from-blue-800 to-blue-900 py-6">
             <div class="container mx-auto px-4 text-center">
                 <p class="text-white text-sm font-light">2026 © Nautical Safety Hub</p>
             </div>
         </div>
     </footer>
-
+    
     <script src="https://cdn.jsdelivr.net/npm/flowbite@2.4.1/dist/flowbite.min.js  "></script>
 </body>
 </html>
+
