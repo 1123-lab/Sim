@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Maritime Safety Hub</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdn.jsdelivr.net/npm/flowbite@2.4.1/dist/flowbite.min.css" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com  "></script>
+    <link href="https://cdn.jsdelivr.net/npm/flowbite@2.4.1/dist/flowbite.min.css  " rel="stylesheet" />
     <style>
         * {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -14,15 +14,23 @@
         
         /* Updated: Red color scheme with transparency */
         .glass-card {
-            background: rgba(220, 38, 38, 0.15); /* Transparent red background */
+            /* Changed: Made red background more transparent */
+            background: rgba(220, 38, 38, 0.1); /* Originally 0.15 */
             backdrop-filter: blur(20px);
-            border: 1px solid rgba(220, 38, 38, 0.2); /* Red-tinted border */
+            /* Changed: Made red border more transparent */
+            border: 1px solid rgba(220, 38, 38, 0.15); /* Originally 0.2 */
             transition: all 0.3s ease;
+            /* Added: Blue box-shadow for the transparent blue edge effect */
+            box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.1), 0 2px 4px -2px rgba(59, 130, 246, 0.1); /* Using blue-400/500 approx RGB */
         }
         .glass-card:hover {
-            background: rgba(220, 38, 38, 0.25); /* Darker red on hover */
+            /* Changed: Made hover background slightly more opaque but still transparent */
+            background: rgba(220, 38, 38, 0.15); /* Originally 0.25 */
             transform: translateY(-5px);
-            box-shadow: 0 20px 40px rgba(220, 38, 38, 0.2); /* Red shadow */
+            /* Changed: Made hover shadow red with blue overlay effect */
+            box-shadow: 
+                0 20px 40px rgba(220, 38, 38, 0.1), /* Original red shadow, reduced opacity */
+                0 0 20px rgba(59, 130, 246, 0.3); /* Added blue glow */
         }
         
         .apple-button {
@@ -60,15 +68,19 @@
         }
         
         .glass-sidebar {
-            background: rgba(127, 29, 29, 0.2); /* Dark red transparent */
+            /* Changed: Made sidebar background more transparent */
+            background: rgba(127, 29, 29, 0.15); /* Originally 0.2 */
             backdrop-filter: blur(20px);
-            border-right: 1px solid rgba(220, 38, 38, 0.2); /* Red border */
+            /* Changed: Made sidebar border more transparent */
+            border-right: 1px solid rgba(220, 38, 38, 0.15); /* Originally 0.2 */
         }
         
         .glass-nav {
-            background: rgba(127, 29, 29, 0.25); /* Dark red transparent */
+            /* Changed: Made nav background more transparent */
+            background: rgba(127, 29, 29, 0.2); /* Originally 0.25 */
             backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(220, 38, 38, 0.2); /* Red border */
+            /* Changed: Made nav border more transparent */
+            border-bottom: 1px solid rgba(220, 38, 38, 0.15); /* Originally 0.2 */
         }
         
         .glass-modal {
@@ -200,17 +212,17 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 <!-- Simulation Card: Agatha -->
                 <div class="glass-card max-w-sm rounded-2xl shadow-2xl flex flex-col overflow-hidden">
-                    <a href="https://1123-lab.github.io/Sim/agathaen.html" class="relative">
-                        <img loading="lazy" class="object-contain h-48 w-full" src="https://github.com/1123-lab/Sim/blob/main/Vessel%20Image.png?raw=true" alt="Vessel Agatha" />
+                    <a href="https://1123-lab.github.io/Sim/agathaen.html  " class="relative">
+                        <img loading="lazy" class="object-contain h-48 w-full" src="https://github.com/1123-lab/Sim/blob/main/Vessel%20Image.png?raw=true  " alt="Vessel Agatha" />
                         <div class="image-overlay absolute inset-0"></div>
                     </a>
                     <div class="p-6 flex flex-col flex-grow">
-                        <a href="https://1123-lab.github.io/Sim/agathaen.html">
+                        <a href="https://1123-lab.github.io/Sim/agathaen.html  ">
                             <h5 class="mb-3 text-2xl font-semibold tracking-tight text-white">Incident on 'Agatha'</h5>
                         </a>
                         <p class="mb-4 font-normal text-white text-opacity-80 flex-grow leading-relaxed">A high-fidelity simulation of a fire incident aboard an accommodation vessel. Make critical decisions as the Captain and see the consequences of your actions.</p>
                         <div class="mt-auto flex flex-col space-y-3">
-                            <a href="https://1123-lab.github.io/Sim/agathaen.html" class="apple-button-primary inline-flex items-center justify-center px-6 py-3 text-sm font-medium text-center text-white rounded-xl">
+                            <a href="https://1123-lab.github.io/Sim/agathaen.html  " class="apple-button-primary inline-flex items-center justify-center px-6 py-3 text-sm font-medium text-center text-white rounded-xl">
                                 Launch Simulation
                                 <svg class="rtl:rotate-180 w-4 h-4 ms-2" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
@@ -225,17 +237,17 @@
                 
                 <!-- Russian Simulation Card -->
                 <div class="glass-card max-w-sm rounded-2xl shadow-2xl flex flex-col overflow-hidden">
-                    <a href="https://1123-lab.github.io/Sim/agatharu.html" class="relative">
-                        <img loading="lazy" class="object-contain h-48 w-full" src="https://github.com/1123-lab/Sim/blob/main/Vessel%20Image.png?raw=true" alt="Российское судно" />
+                    <a href="https://1123-lab.github.io/Sim/agatharu.html  " class="relative">
+                        <img loading="lazy" class="object-contain h-48 w-full" src="https://github.com/1123-lab/Sim/blob/main/Vessel%20Image.png?raw=true  " alt="Российское судно" />
                         <div class="image-overlay absolute inset-0"></div>
                     </a>
                     <div class="p-6 flex flex-col flex-grow">
-                        <a href="https://1123-lab.github.io/Sim/agatharu.html">
+                        <a href="https://1123-lab.github.io/Sim/agatharu.html  ">
                             <h5 class="mb-3 text-2xl font-semibold tracking-tight text-white">Инцидент на 'Агате'</h5>
                         </a>
                         <p class="mb-4 font-normal text-white text-opacity-80 flex-grow leading-relaxed">Высокоточная симуляция пожара на борту жилого судна. Принимайте критические решения как Капитан и наблюдайте за последствиями ваших действий.</p>
                         <div class="mt-auto flex flex-col space-y-3">
-                            <a href="https://1123-lab.github.io/Sim/agatharu.html" class="apple-button-primary inline-flex items-center justify-center px-6 py-3 text-sm font-medium text-center text-white rounded-xl">
+                            <a href="https://1123-lab.github.io/Sim/agatharu.html  " class="apple-button-primary inline-flex items-center justify-center px-6 py-3 text-sm font-medium text-center text-white rounded-xl">
                                 Запустить симуляцию
                                 <svg class="rtl:rotate-180 w-4 h-4 ms-2" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
@@ -356,7 +368,7 @@
                     </p>
                 </div>
                 <div class="flex items-center p-6 border-t border-red-200 rounded-b">
-                    <a href="https://1123-lab.github.io/Sim/agathaen.html" class="apple-button-primary font-medium rounded-xl text-sm px-6 py-3 text-center">Launch Simulation</a>
+                    <a href="https://1123-lab.github.io/Sim/agathaen.html  " class="apple-button-primary font-medium rounded-xl text-sm px-6 py-3 text-center">Launch Simulation</a>
                     <button data-modal-hide="agatha-modal" type="button" class="apple-button py-3 px-6 ms-3 text-sm font-medium rounded-xl">Close</button>
                 </div>
             </div>
@@ -387,7 +399,7 @@
                     </p>
                 </div>
                 <div class="flex items-center p-6 border-t border-red-200 rounded-b">
-                    <a href="https://1123-lab.github.io/Sim/agatharu.html" class="apple-button-primary font-medium rounded-xl text-sm px-6 py-3 text-center">Запустить симуляцию</a>
+                    <a href="https://1123-lab.github.io/Sim/agatharu.html  " class="apple-button-primary font-medium rounded-xl text-sm px-6 py-3 text-center">Запустить симуляцию</a>
                     <button data-modal-hide="russian-modal" type="button" class="apple-button py-3 px-6 ms-3 text-sm font-medium rounded-xl">Закрыть</button>
                 </div>
             </div>
@@ -396,13 +408,15 @@
     
     <!-- Footer -->
     <footer class="relative z-10 mt-16">
-        <div class="bg-gradient-to-r from-red-800 to-red-900 py-6">
+        <!-- Changed: Footer background gradient to blue -->
+        <div class="bg-gradient-to-r from-blue-800 to-blue-900 py-6">
             <div class="container mx-auto px-4 text-center">
                 <p class="text-white text-sm font-light">2026 © Nautical Safety Hub</p>
             </div>
         </div>
     </footer>
     
-    <script src="https://cdn.jsdelivr.net/npm/flowbite@2.4.1/dist/flowbite.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flowbite@2.4.1/dist/flowbite.min.js  "></script>
 </body>
 </html>
+
